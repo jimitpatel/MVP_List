@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/realm"
+        android:title="@string/realm"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/sqlite"
+        android:title="@string/sqlite"
+        app:showAsAction="never" />
+</menu>

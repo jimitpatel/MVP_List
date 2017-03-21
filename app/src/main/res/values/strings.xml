@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Wellthy</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="circular_black">font/CircularStd-Black.ttf</string>
+    <string name="circular_bold">font/CircularStd-Bold.ttf</string>
+    <string name="circular_book">font/CircularStd-Book.ttf</string>
+    <string name="circular_medium">font/CircularStd-Medium.ttf</string>
+
+    <string name="realm">Realm</string>
+    <string name="sqlite">SQLite</string>
+</resources>
