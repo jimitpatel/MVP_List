@@ -36,6 +36,10 @@ public class PresenterWalaImplClass extends BasePresenter<IMvp.PresenterToView>
 
     private IMvp.PresenterToModel model;
     private AdapterDelegatesManager<List<DisplayableItem>> delegatesManager;
+    private Callback<List<PojoRealmClass>> mRealmListCallback;
+    private Callback<List<PojoSqliteClass>> mSqliteListCallback;
+    private Call<List<PojoRealmClass>> realmCall;
+    private Call<List<PojoSqliteClass>> sqliteCall;
 
     public PresenterWalaImplClass(IMvp.PresenterToView view) {
         super(view);
@@ -157,40 +161,41 @@ public class PresenterWalaImplClass extends BasePresenter<IMvp.PresenterToView>
         return getView().isRealm();
     }
 
-    private void callForRealm() throws Exception {
-        if (NetworkUtils.haveNetworkConnection(getActivityContext())) {
-            IMvp client = RetrofitUtils.createService(IMvp.class);
-            Callback<List<PojoRealmClass>> callback = new Callback<List<PojoRealmClass>>() {
-                @Override
-                public void onResponse(Call<List<PojoRealmClass>> call, Response<List<PojoRealmClass>> response) {
-                    if (response.isSuccessful()) {
-                        List<PojoRealmClass> list = response.body();
-                        if (null != list) PojoRealmClass.writeToRealm(list);
-                        setList(list);
-                        if (model.getItemCount() > 0) getView().notifyDatasetChanged();
-                        if (BuildConfig.DEBUG)
-                            Log.d(TAG, "onResponse: realm API=" + getItemCount());
-                    }
+    void callForRealm() throws Exception {
+        IMvp client = RetrofitUtils.createService(IMvp.class);
+        mRealmListCallback = new Callback<List<PojoRealmClass>>() {
+            @Override
+            public void onResponse(Call<List<PojoRealmClass>> call, Response<List<PojoRealmClass>> response) {
+                if (response.isSuccessful()) {
+                    List<PojoRealmClass> list = response.body();
+                    if (null != list) PojoRealmClass.writeToRealm(list);
+                    setList(list);
+                    if (model.getItemCount() > 0) getView().notifyDatasetChanged();
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onResponse: realm API=" + getItemCount());
                 }
+            }
 
-                @Override
-                public void onFailure(Call<List<PojoRealmClass>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            };
+            @Override
+            public void onFailure(Call<List<PojoRealmClass>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        };
 
-            Call<List<PojoRealmClass>> call = client.getUserListForRealm();
-            call.enqueue(callback);
-        } else {
-            Toast.makeText(getAppContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
-        }
+        realmCall = client.getUserListForRealm();
+        realmCall.enqueue(mRealmListCallback);
+//        if (NetworkUtils.haveNetworkConnection(getActivityContext())) {
+//
+//        } else {
+//            Toast.makeText(getAppContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+//        }
     }
 
-    private void callForSqlite() throws Exception {
+    void callForSqlite() throws Exception {
         if (NetworkUtils.haveNetworkConnection(getActivityContext())) {
             Log.d(TAG, "callApi: ");
             IMvp client = RetrofitUtils.createService(IMvp.class);
-            Callback<List<PojoSqliteClass>> callback = new Callback<List<PojoSqliteClass>>() {
+            mSqliteListCallback = new Callback<List<PojoSqliteClass>>() {
                 @Override
                 public void onResponse(Call<List<PojoSqliteClass>> call, Response<List<PojoSqliteClass>> response) {
                     if (response.isSuccessful()) {
@@ -211,10 +216,26 @@ public class PresenterWalaImplClass extends BasePresenter<IMvp.PresenterToView>
                 }
             };
 
-            Call<List<PojoSqliteClass>> call = client.getUserListForSqlite();
-            call.enqueue(callback);
+            sqliteCall = client.getUserListForSqlite();
+            sqliteCall.enqueue(mSqliteListCallback);
         } else {
             Toast.makeText(getAppContext(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    void setRealmCallback(Callback<List<PojoRealmClass>> listCallback) {
+        this.mRealmListCallback = listCallback;
+    }
+
+    void setSqliteCallback(Callback<List<PojoSqliteClass>> listCallback) {
+        this.mSqliteListCallback = listCallback;
+    }
+
+    void setRealmCall(Call<List<PojoRealmClass>> listCall) {
+        this.realmCall = listCall;
+    }
+
+    void setSqliteCall(Call<List<PojoSqliteClass>> listCall) {
+        this.sqliteCall = listCall;
     }
 }
