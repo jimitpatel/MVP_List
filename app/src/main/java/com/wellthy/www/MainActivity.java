@@ -10,6 +10,7 @@ import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.wellthy.www.base.CommonAdapter;
 import com.wellthy.www.base.StateMaintainer;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements IMvp.PresenterToV
         ButterKnife.bind(this);
 
         setupMVP();
+        mPresenter.setDelegates();
         initViews();
         mPresenter.callApi();
     }
@@ -75,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements IMvp.PresenterToV
     @Override
     public void notifyDatasetChanged() {
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void display(String message) {
+        Toast.makeText(getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void setupMVP() {

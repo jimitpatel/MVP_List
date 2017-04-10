@@ -20,6 +20,7 @@ public interface IMvp {
         void onDestroy(boolean isConfigurationChanged);
         void setView(PresenterToView view);
         void setModel(PresenterToModel model);
+        void setDelegates();
 
         void callApi();
     }
@@ -53,6 +54,7 @@ public interface IMvp {
 
     interface ApiCallback {
         void notifyDatasetChanged();
+        void display(String message);
     }
 
     @GET("users")
